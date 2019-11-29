@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>VM Project</title>
+	<meta charset="UTF-8">
+
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+</head>
+<body>
+	<nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
+	  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+	    <span class="navbar-toggler-icon"></span>
+	  </button>
+	  <div class="collapse navbar-collapse" id="navbarText">
+	    <ul class="navbar-nav mr-auto">
+	      <li class="nav-item active">
+	        <a class="nav-link" href="http://127.0.0.1:5000/">Home <span class="sr-only">(current)</span></a>
+	      </li>
+	      <li class="nav-item">
+	        <a class="nav-link"  data-toggle="modal" data-target="#ModalCreateVM" >Create VM</a>
+	      </li>
+	    </ul>
+	  </div>
+	</nav>
+	<div class="container mt-5 text-center" >
+		<div class="card border-secondary mb-3" style="max-width: 200rem;">
+			<div class="card-body">
+			    <h1 class="card-title">VM Project</h1>
+			    <table class="table">
+				  <thead class="thead-p-3 mb-2 bg-secondary text-white">
+				    <tr>
+				      <th scope="col">#</th>
+				      <th scope="col">VM Name</th>
+				      <th scope="col">OS</th>
+				      <th scope="col"></th>
+				    </tr>
+				  </thead>
+				  <tbody>
+				  	{% for machine in myList%}
+				    <tr>
+				      <th scope="row">{{loop.index}}</th>
+				      <td>{{machine["Name"]}}</td>
+				      <td>{{machine["Guest OS"]}}</td>
+				      <td>
+				      	<div class="btn-group" role="group" aria-label="Basic example">
+						  <button type="button" class="btn btn-secondary" data-toggle="modal" data-target={{'#ModalCenter%d'%(loop.index)}} >Edit</button>
+						  <form action="startvm" method="POST">
+						  <button type="submit" name="name" value='{{machine["Name"]}}' class="btn btn-secondary">Start</button>
+						  </form>
+						</div>
+				      </td>
+				    </tr>
+				    {% endfor %}
+				  </tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<!-- Modal -->
+	{%for machine in myList%}
+	<div class="modal fade" id={{'ModalCenter%d'%(loop.index)}} tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	  <div class="modal-dialog modal-dialog-centered" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header bg-secondary text-white">
+	        <h5 class="modal-title" id="exampleModalCenterTitle">Edit Machine</h5>
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          <span aria-hidden="true">&times;</span>
+	        </button>
+	      </div>
+	      <div class="modal-body text-left">
+	      	<h5> Current Machine Values</h5>
+	      	<hr>
+	         <form action="/modifymachine" method="POST">
+	        	<div class="form-row">
+				  <div class="form-group col-md-6">
+				    <label for="exampleInputName">Name</label>
+				    <input readonly name="name" type="text" class="form-control" id="exampleInputName" value="{{machine['Name']}}">
+				  </div>
+				  <div class="form-group col-md-6">
+				    <label for="exampleInputGuestos">Guest OS</label>
+				    <input readonly name="guestos" type="text" class="form-control" id="exampleInputGuestos" value="{{machine['Guest OS']}}">
+				  </div>
+				  <div class="form-group col-md-6">
+				    <label for="exampleInputMemorySize">Memory Size</label>
+				    <input name="memorysize" type="text" class="form-control" id="exampleInputMemorySize" placeholder="{{machine['Memory size']}}">
+				  </div>
+				  <div class="form-group col-md-6">
+				    <label for="exampleInputNumbercpu">Number of CPU's</label>
+				    <input name="numbercpus" type="text" class="form-control" id="exampleInputNumbercpu" placeholder="{{machine['Number of CPUs']}}">
+				  </div>
+				</div>
+				<div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+		        <button type="submit" class="btn btn-primary">Save changes</button>
+		      </div>
+			</form>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	{% endfor %}
+
+
+
+
+
+	<!-- Modal Create VM-->
+	<div class="modal fade" id="ModalCreateVM" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	  <div class="modal-dialog modal-dialog-centered" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header bg-secondary text-white">
+	        <h5 class="modal-title" id="exampleModalCenterTitle">Create Machine</h5>
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          <span aria-hidden="true">&times;</span>
+	        </button>
+	      </div>
+	      <div class="modal-body text-left">
+	      	<h5>New Machine</h5>
+	      	<hr>
+	         <form action="/create" method="POST">
+	        	<div class="form-row">
+				  <div class="form-group col-md-6">
+				    <label for="exampleInputName">Name</label>
+				    <input  name="name" type="text" class="form-control" id="exampleInputName">
+				  </div>
+				  <div class="form-group col-md-6">                 
+				  	<label for="exampleFormControlSelect1">Guest OS</label>              
+				  	<select class="form-control"  name="guestos" id="exampleFormControlSelect1">                   
+				  		<option value="" disabled selected>Select OS</option>                   
+				  		<option value="WindowsXP.ova">Windows</option>                   
+				  		<option value="Linux.ova" selected>Linux</option>                     
+				  	</select>
+				  </div>
+				  <div class="form-group col-md-6">
+				    <label for="exampleInputMemorySize">Memory Size</label>
+				    <input name="memorysize" type="text" class="form-control" id="exampleInputMemorySize">
+				  </div>
+				  <div class="form-group col-md-6">
+				    <label for="exampleInputNumbercpu">Number of CPU's</label>
+				    <input name="numbercpus" type="text" class="form-control" id="exampleInputNumbercpu">
+				  </div>
+				  <div class="form-group col-md-6">
+				    <label for="exampleInputIP">IP</label>
+				    <input name="ip" type="text" class="form-control" id="exampleInputIP">
+				  </div>
+				</div>
+				<div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+		        <button type="submit" class="btn btn-primary">Submit</button>
+		      </div>
+			</form>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+	
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+</html>
